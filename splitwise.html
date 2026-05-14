@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Splitify</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap');
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+:root{
+  --bg:#0d0d0f;
+  --bg2:#161618;
+  --bg3:#1f1f24;
+  --border:#2e2e36;
+  --accent:#6c63ff;
+  --accent2:#8b85ff;
+  --text:#f0f0f4;
+  --text2:#9494a8;
+  --green:#22c55e;
+  --red:#ef4444;
+  --radius:14px;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Space Grotesk',sans-serif;
+  min-height:100vh;
+}
+
+.screen{
+  display:none;
+  min-height:100vh;
+  flex-direction:column;
+}
+
+.screen.active{
+  display:flex;
+}
+
+/* SPLASH */
+
+.splash{
+  margin:auto;
+  text-align:center;
+}
+
+.splash h1{
+  font-size:70px;
+  margin-bottom:10px;
+}
+
+.splash span{
+  color:var(--accent2);
+}
+
+.splash p{
+  color:var(--text2);
+  margin-bottom:30px;
+}
+
+/* TOPBAR */
+
+.topbar{
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  padding:15px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo{
+  font-size:20px;
+  font-weight:600;
+}
+
+.logo span{
+  color:var(--accent2);
+}
+
+.small{
+  color:var(--text2);
+  font-size:12px;
+  margin-top:4px;
+}
+
+/* CONTAINER */
+
+.container{
+  width:100%;
+  max-width:700px;
+  margin:auto;
+  padding:20px;
+}
+
+.hero{
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.hero h1{
+  font-size:36px;
+  margin-bottom:10px;
+}
+
+.hero p{
+  color:var(--text2);
+}
+
+.card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:20px;
+  margin-bottom:18px;
+}
+
+.card-title{
+  font-size:13px;
+  color:var(--text2);
+  margin-bottom:15px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+
+input,
+select{
+  width:100%;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:13px;
+  color:var(--text);
+  margin-bottom:12px;
+  outline:none;
+  font-size:14px;
+}
+
+input:focus,
+select:focus{
+  border-color:var(--accent);
+}
+
+/* BUTTONS */
+
+.btn{
+  border:none;
+  border-radius:var(--radius);
+  padding:13px 18px;
+  cursor:pointer;
+  font-weight:600;
+  transition:0.2s;
+}
+
+.btn:hover{
+  opacity:0.9;
+}
+
+.btn-primary{
+  background:var(--accent);
+  color:white;
+}
+
+.btn-secondary{
+  background:var(--bg3);
+  color:white;
+}
+
+.btn-success{
+  background:var(--green);
+  color:white;
+}
+
+.btn-danger{
+  background:var(--red);
+  color:white;
+}
+
+.btn-full{
+  width:100%;
+}
+
+.btn-sm{
+  padding:8px 12px;
+  font-size:12px;
+}
+
+/* LAYOUT */
+
+.row{
+  display:flex;
+  gap:10px;
+}
+
+.divider{
+  text-align:center;
+  color:var(--text2);
+  margin:18px 0;
+}
+
+.room-code{
+  background:var(--bg3);
+  border-radius:18px;
+  padding:20px;
+  text-align:center;
+  font-size:34px;
+  letter-spacing:4px;
+  margin:20px 0;
+  font-weight:600;
+}
+
+.expense{
+  background:var(--bg3);
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.expense small{
+  color:var(--text2);
+}
+
+.member{
+  background:var(--bg3);
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:10px;
+}
+
+.summary{
+  background:var(--bg3);
+  padding:14px;
+  border-radius:12px;
+  margin-bottom:10px;
+}
+
+.summary h3{
+  margin-bottom:10px;
+}
+
+.tabs{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.tab{
+  flex:1;
+  text-align:center;
+  padding:12px;
+  border-radius:12px;
+  background:var(--bg3);
+  cursor:pointer;
+}
+
+.tab.active{
+  background:var(--accent);
+}
+
+/* TOAST */
+
+.toast{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#222;
+  padding:12px 18px;
+  border-radius:12px;
+  opacity:0;
+  transition:0.2s;
+}
+
+.toast.show{
+  opacity:1;
+}
+
+.err{
+  color:#ff6b6b;
+  font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH SCREEN -->
+
+<div class="screen active" id="splash-screen">
+
+  <div class="splash">
+
+    <h1>split<span>ify</span> ⚡</h1>
+
+    <p>Smart expense splitting app</p>
+
+    <button class="btn btn-primary" onclick="openHome()">
+      Continue
+    </button>
+
+  </div>
+
+</div>
+
+<!-- HOME SCREEN -->
+
+<div class="screen" id="home-screen">
+
+  <div class="topbar">
+
+    <div class="logo">
+      split<span>ify</span> ⚡
+    </div>
+
+  </div>
+
+  <div class="container">
+
+    <div class="hero">
+
+      <h1>Split expenses,<br>not friendships</h1>
+
+      <p>Create rooms and calculate who pays whom.</p>
+
+    </div>
+
+    <!-- CREATE ROOM -->
+
+    <div class="card">
+
+      <div class="card-title">
+        Create Room
+      </div>
+
+      <input type="text" id="party-name" placeholder="Party Name">
+
+      <input type="text" id="host-name" placeholder="Your Name">
+
+      <button class="btn btn-primary btn-full" onclick="createRoom()">
+        Create Room
+      </button>
+
+    </div>
+
+    <div class="divider">OR</div>
+
+    <!-- JOIN ROOM -->
+
+    <div class="card">
+
+      <div class="card-title">
+        Join Room
+      </div>
+
+      <div class="row">
+
+        <input type="text" id="join-code" placeholder="Room Code">
+
+        <button class="btn btn-secondary" onclick="showJoinScreen()">
+          Join
+        </button>
+
+      </div>
+
+      <div class="err" id="join-error"></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- SHARE SCREEN -->
+
+<div class="screen" id="share-screen">
+
+  <div class="topbar">
+
+    <div class="logo">
+      split<span>ify</span> ⚡
+    </div>
+
+    <button class="btn btn-secondary btn-sm" onclick="goHome()">
+      Back
+    </button>
+
+  </div>
+
+  <div class="container">
+
+    <div class="card">
+
+      <div class="card-title">
+        Room Created
+      </div>
+
+      <h2 id="share-party-name"></h2>
+
+      <div class="room-code" id="share-room-code"></div>
+
+      <button class="btn btn-primary btn-full" onclick="goToRoom()">
+        Enter Room
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- JOIN SCREEN -->
+
+<div class="screen" id="join-screen">
+
+  <div class="topbar">
+
+    <div class="logo">
+      split<span>ify</span> ⚡
+    </div>
+
+    <button class="btn btn-secondary btn-sm" onclick="goHome()">
+      Back
+    </button>
+
+  </div>
+
+  <div class="container">
+
+    <div class="card">
+
+      <div class="card-title">
+        Join Room
+      </div>
+
+      <h2 id="join-party-name"></h2>
+
+      <input type="text" id="member-name" placeholder="Your Name">
+
+      <button class="btn btn-primary btn-full" onclick="joinRoom()">
+        Join Room
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ROOM SCREEN -->
+
+<div class="screen" id="room-screen">
+
+  <div class="topbar">
+
+    <div>
+
+      <div class="logo">
+        split<span>ify</span> ⚡
+      </div>
+
+      <div class="small">
+        <span id="room-name"></span>
+        ·
+        Code:
+        <span id="room-code"></span>
+      </div>
+
+    </div>
+
+    <button class="btn btn-danger btn-sm" onclick="goHome()">
+      Exit
+    </button>
+
+  </div>
+
+  <div class="container">
+
+    <!-- TABS -->
+
+    <div class="tabs">
+
+      <div class="tab active" onclick="showTab('expenses',event)">
+        Expenses
+      </div>
+
+      <div class="tab" onclick="showTab('members',event)">
+        Members
+      </div>
+
+      <div class="tab" onclick="showTab('settlement',event)">
+        Settlement
+      </div>
+
+    </div>
+
+    <!-- EXPENSE TAB -->
+
+    <div id="expenses-tab">
+
+      <!-- ADD MEMBERS -->
+
+      <div class="card">
+
+        <div class="card-title">
+          Add Members
+        </div>
+
+        <div class="row">
+
+          <input
+            type="text"
+            id="new-member-name"
+            placeholder="Enter Member Name"
+          >
+
+          <button
+            class="btn btn-success"
+            onclick="addMember()"
+          >
+            Add
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- ADD EXPENSE -->
+
+      <div class="card">
+
+        <div class="card-title">
+          Add Expense
+        </div>
+
+        <input
+          type="text"
+          id="expense-desc"
+          placeholder="Expense Description"
+        >
+
+        <div class="row">
+
+          <input
+            type="number"
+            id="expense-amount"
+            placeholder="Amount"
+          >
+
+          <select id="expense-payer"></select>
+
+        </div>
+
+        <button
+          class="btn btn-primary btn-full"
+          onclick="addExpense()"
+        >
+          Add Expense
+        </button>
+
+      </div>
+
+      <!-- EXPENSE LIST -->
+
+      <div class="card">
+
+        <div class="card-title">
+          Expense List
+        </div>
+
+        <div id="expense-list"></div>
+
+      </div>
+
+    </div>
+
+    <!-- MEMBERS TAB -->
+
+    <div id="members-tab" style="display:none">
+
+      <div class="card">
+
+        <div class="card-title">
+          Members
+        </div>
+
+        <div id="members-list"></div>
+
+      </div>
+
+    </div>
+
+    <!-- SETTLEMENT TAB -->
+
+    <div id="settlement-tab" style="display:none">
+
+      <div class="card">
+
+        <div class="card-title">
+          Settlement Calculator
+        </div>
+
+        <div id="settlement-list"></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- TOAST -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DB = {
+  rooms:{}
+};
+
+let currentRoom = null;
+let currentUser = null;
+
+/* HELPERS */
+
+function randomCode(){
+
+  return Math.floor(
+    100000 + Math.random() * 900000
+  ).toString();
+}
+
+function showScreen(id){
+
+  document
+    .querySelectorAll('.screen')
+    .forEach(screen=>{
+      screen.classList.remove('active');
+    });
+
+  document
+    .getElementById(id)
+    .classList.add('active');
+}
+
+function toast(message){
+
+  const toast =
+    document.getElementById('toast');
+
+  toast.textContent = message;
+
+  toast.classList.add('show');
+
+  setTimeout(()=>{
+    toast.classList.remove('show');
+  },2000);
+}
+
+/* SPLASH */
+
+function openHome(){
+
+  showScreen('home-screen');
+}
+
+/* CREATE ROOM */
+
+function createRoom(){
+
+  const partyName =
+    document.getElementById('party-name')
+    .value.trim();
+
+  const hostName =
+    document.getElementById('host-name')
+    .value.trim();
+
+  if(!partyName || !hostName){
+
+    toast('Please fill all fields');
+
+    return;
+  }
+
+  const code = randomCode();
+
+  DB.rooms[code] = {
+    name:partyName,
+    code:code,
+    members:[hostName],
+    expenses:[]
+  };
+
+  currentRoom = code;
+  currentUser = hostName;
+
+  document.getElementById('share-party-name')
+    .textContent = partyName;
+
+  document.getElementById('share-room-code')
+    .textContent = code;
+
+  showScreen('share-screen');
+}
+
+/* JOIN SCREEN */
+
+function showJoinScreen(){
+
+  const code =
+    document.getElementById('join-code')
+    .value.trim();
+
+  if(!DB.rooms[code]){
+
+    document.getElementById('join-error')
+      .textContent = 'Room not found';
+
+    return;
+  }
+
+  currentRoom = code;
+
+  document.getElementById('join-party-name')
+    .textContent = DB.rooms[code].name;
+
+  showScreen('join-screen');
+}
+
+/* JOIN ROOM */
+
+function joinRoom(){
+
+  const name =
+    document.getElementById('member-name')
+    .value.trim();
+
+  if(!name){
+
+    toast('Enter your name');
+
+    return;
+  }
+
+  const room = DB.rooms[currentRoom];
+
+  if(!room.members.includes(name)){
+
+    room.members.push(name);
+  }
+
+  currentUser = name;
+
+  goToRoom();
+}
+
+/* GO TO ROOM */
+
+function goToRoom(){
+
+  const room = DB.rooms[currentRoom];
+
+  document.getElementById('room-name')
+    .textContent = room.name;
+
+  document.getElementById('room-code')
+    .textContent = room.code;
+
+  renderPayerSelect();
+  renderExpenses();
+  renderMembers();
+  renderSettlement();
+
+  showScreen('room-screen');
+}
+
+/* TABS */
+
+function showTab(tab,event){
+
+  document.getElementById('expenses-tab')
+    .style.display = 'none';
+
+  document.getElementById('members-tab')
+    .style.display = 'none';
+
+  document.getElementById('settlement-tab')
+    .style.display = 'none';
+
+  document.getElementById(tab + '-tab')
+    .style.display = 'block';
+
+  document
+    .querySelectorAll('.tab')
+    .forEach(tab=>{
+      tab.classList.remove('active');
+    });
+
+  event.target.classList.add('active');
+}
+
+/* ADD MEMBER */
+
+function addMember(){
+
+  const input =
+    document.getElementById('new-member-name');
+
+  const memberName =
+    input.value.trim();
+
+  if(!memberName){
+
+    toast('Enter member name');
+
+    return;
+  }
+
+  const room = DB.rooms[currentRoom];
+
+  if(room.members.includes(memberName)){
+
+    toast('Member already exists');
+
+    return;
+  }
+
+  room.members.push(memberName);
+
+  input.value = '';
+
+  renderPayerSelect();
+  renderMembers();
+  renderSettlement();
+
+  toast('Member Added');
+}
+
+/* PAYER SELECT */
+
+function renderPayerSelect(){
+
+  const room = DB.rooms[currentRoom];
+
+  const select =
+    document.getElementById('expense-payer');
+
+  select.innerHTML =
+    room.members.map(member=>`
+
+      <option value="${member}">
+        ${member}
+      </option>
+
+    `).join('');
+}
+
+/* ADD EXPENSE */
+
+function addExpense(){
+
+  const desc =
+    document.getElementById('expense-desc')
+    .value.trim();
+
+  const amount =
+    parseFloat(
+      document.getElementById('expense-amount')
+      .value
+    );
+
+  const payer =
+    document.getElementById('expense-payer')
+    .value;
+
+  if(!desc || !amount){
+
+    toast('Enter valid expense');
+
+    return;
+  }
+
+  DB.rooms[currentRoom].expenses.push({
+    desc:desc,
+    amount:amount,
+    payer:payer
+  });
+
+  document.getElementById('expense-desc')
+    .value = '';
+
+  document.getElementById('expense-amount')
+    .value = '';
+
+  renderExpenses();
+  renderSettlement();
+
+  toast('Expense Added');
+}
+
+/* EXPENSES */
+
+function renderExpenses(){
+
+  const room = DB.rooms[currentRoom];
+
+  const container =
+    document.getElementById('expense-list');
+
+  if(room.expenses.length === 0){
+
+    container.innerHTML =
+      '<p>No expenses yet</p>';
+
+    return;
+  }
+
+  container.innerHTML =
+    room.expenses.map(expense=>`
+
+      <div class="expense">
+
+        <div>
+
+          <strong>${expense.desc}</strong><br>
+
+          <small>${expense.payer}</small>
+
+        </div>
+
+        <div>
+          ₹${expense.amount.toFixed(2)}
+        </div>
+
+      </div>
+
+    `).join('');
+}
+
+/* MEMBERS */
+
+function renderMembers(){
+
+  const room = DB.rooms[currentRoom];
+
+  const container =
+    document.getElementById('members-list');
+
+  container.innerHTML =
+    room.members.map(member=>`
+
+      <div class="member">
+
+        <strong>${member}</strong><br>
+
+        <span>
+          ${member === currentUser ? 'You' : 'Member'}
+        </span>
+
+      </div>
+
+    `).join('');
+}
+
+/* SETTLEMENT */
+
+function renderSettlement(){
+
+  const room = DB.rooms[currentRoom];
+
+  const container =
+    document.getElementById('settlement-list');
+
+  if(room.expenses.length === 0){
+
+    container.innerHTML =
+      '<p>No expenses yet</p>';
+
+    return;
+  }
+
+  const spent = {};
+
+  room.members.forEach(member=>{
+    spent[member] = 0;
+  });
+
+  room.expenses.forEach(expense=>{
+    spent[expense.payer] += expense.amount;
+  });
+
+  const total =
+    Object.values(spent)
+    .reduce((a,b)=>a+b,0);
+
+  const share =
+    total / room.members.length;
+
+  let html = `
+
+    <div class="summary">
+
+      <h3>Total Summary</h3>
+
+      <p>Total Spent: ₹${total.toFixed(2)}</p>
+
+      <p>Per Person: ₹${share.toFixed(2)}</p>
+
+    </div>
+  `;
+
+  room.members.forEach(member=>{
+
+    const diff = spent[member] - share;
+
+    if(diff > 0){
+
+      html += `
+
+        <div class="summary">
+
+          <p>
+            <strong>${member}</strong>
+            should receive
+            ₹${diff.toFixed(2)}
+          </p>
+
+        </div>
+      `;
+    }
+
+    else if(diff < 0){
+
+      html += `
+
+        <div class="summary">
+
+          <p>
+            <strong>${member}</strong>
+            should pay
+            ₹${Math.abs(diff).toFixed(2)}
+          </p>
+
+        </div>
+      `;
+    }
+
+    else{
+
+      html += `
+
+        <div class="summary">
+
+          <p>
+            <strong>${member}</strong>
+            is settled
+          </p>
+
+        </div>
+      `;
+    }
+  });
+
+  container.innerHTML = html;
+}
+
+/* HOME */
+
+function goHome(){
+
+  currentRoom = null;
+  currentUser = null;
+
+  showScreen('home-screen');
+}
+</script>
+
+</body>
+</html>
